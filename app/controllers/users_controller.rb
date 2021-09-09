@@ -60,7 +60,8 @@ class UsersController < ApplicationController
   def create_fast
     name = params[:name]
     email = params[:email]
-    @user = User.create(name: name, email: email)
+    birthday = params[:birthday]
+    @user = User.create(name: name, email: email, birthday: birthday)
     # redirect_to 'users_path'
     render 'create_fast'
   end

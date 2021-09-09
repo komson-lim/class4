@@ -3,4 +3,4 @@
 <%= @user.email%>
 <%= @user.birthday%>
 <%= link_to 'index', users_path%>
-<%= link_to 'restore', "/create_fast?name=#{@user.name}&email=#{@user.email}"%>
+<%= link_to 'restore', "/create_fast?name=#{@user.name}&email=#{@user.email}&birthday=#{@user.birthday}"%>
