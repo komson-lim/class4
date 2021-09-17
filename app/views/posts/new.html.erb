@@ -1,0 +1,5 @@
+<h1>New Post</h1>
+
+<%= render 'form', post: @post, user_id: @user_id, path: user_posts_path(@user_id) %>
+
+<%= link_to 'Back', user_path(@user_id) %>

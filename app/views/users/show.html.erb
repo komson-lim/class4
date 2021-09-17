@@ -19,11 +19,32 @@
   <strong>Address:</strong>
   <%= @user.address %>
 </p>
-<p>
 
+<p>
   <strong>Postal Code:</strong>
   <%= @user.postal_code %>
 </p>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', users_path %>
+<%= link_to 'Create post', user_path+"/posts/new"%>
+<%#= link_to 'Back', users_path %>
+
+<h2>Posts</h2>
+<table>
+  <thead>
+    <th>messages</th>
+    <th>date</th>
+  </thead>
+  <tbody>
+    <% @posts.each do |post|%>
+      <tr>
+        <td><%= post.msg%></td>
+        <td><%= post.updated_at%></td>
+        <td><%= link_to 'show', user_post_path(@user,post) %></td>
+        <td><%= link_to 'edit', edit_user_post_path(@user,post) %></td>
+        <td><%= link_to 'delete', user_post_path(@user,post), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+
+</table>

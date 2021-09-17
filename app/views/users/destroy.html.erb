@@ -2,5 +2,7 @@
 <%= @user.name%>
 <%= @user.email%>
 <%= @user.birthday%>
+<%= @user.address%>
+<%= @user.postal_code%>
 <%= link_to 'index', users_path%>
-<%= link_to 'restore', "/create_fast?name=#{@user.name}&email=#{@user.email}&birthday=#{@user.birthday}"%>
+<%= link_to 'restore', "/create_fast?name=#{@user.name}&email=#{@user.email}&birthday=#{@user.birthday}&address=#{@user.address}&postal_code=#{@user.postal_code}"%>

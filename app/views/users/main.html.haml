@@ -1,0 +1,12 @@
+%p{:id => "notice"}= notice 
+= form_with() do |form|
+    #field
+        = form.label :email
+        = form.text_field :email
+    #field
+        = form.label :pass
+        = form.password_field :pass
+    #actions 
+        = form.submit "login"
+       
+       
