@@ -3,6 +3,10 @@ Rails.application.routes.draw do
   resources :users do
     resources :posts
   end
+  get 'posts', to: 'posts#index'
+  get 'posts/new', to: 'posts#post_new', as: 'new_post'
+  post 'posts/new', to: 'posts#post_create', as: 'create_post'
+
   get 'create_fast', to: 'users#create_fast'
   get 'main' , to: 'users#main'
   post 'main', to: 'users#login'

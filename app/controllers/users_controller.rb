@@ -1,14 +1,20 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy]
   # before_action(:set_user, only: [:show,:edit,:update,:destroy])
-
+  # before_action :logged_in ,except: %i[main login]
   # GET /users or /users.json
   def index
+    if (!logged_in)
+      return
+    end
     @users = User.all
   end
 
   # GET /users/1 or /users/1.json
   def show
+    if (!logged_in || !correct_user)
+      return
+    end
     @posts = @user.posts
   end
 
@@ -19,14 +25,17 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    if (!logged_in || !correct_user)
+      return
+    end
   end
 
   # POST /users or /users.json
   def create
     @user = User.new(user_params)
-
     respond_to do |format|
       if @user.save
+        session[:user_id] = @user.id
         format.html { redirect_to @user, notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
@@ -38,6 +47,9 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
+    if (!logged_in || !correct_user)
+      return
+    end
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: "User was successfully updated." }
@@ -51,6 +63,9 @@ class UsersController < ApplicationController
 
   # DELETE /users/1 or /users/1.json
   def destroy
+    if (!logged_in || !correct_user)
+      return
+    end
     @user.destroy
     render 'destroy'
     # respond_to do |format|
@@ -71,19 +86,17 @@ class UsersController < ApplicationController
   end
 
   def main
-
+    session[:user_id] = nil
   end
 
   def login
-    puts params[:email]
-    puts params[:pass]
+    session[:user_id] = nil
     @user = User.find_by(email: params[:email])
     respond_to do |format|
       if @user != nil
-        puts @user.pass
-        puts params[:pass]
-        if @user.pass == params[:pass]
+        if @user.authenticate(params[:password])
           format.html { redirect_to @user }
+          session[:user_id] = @user.id
         else
           format.html { redirect_to "/main", notice: "Wrong password" }
         end
@@ -100,6 +113,25 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email, :name, :birthday,:address, :postal_code, :pass)
+      params.require(:user).permit(:email, :name, :birthday,:address, :postal_code, :password)
+    end
+
+    def logged_in
+      if (session[:user_id])
+          return true
+      else
+        redirect_to "/main", notice: "Please login"
+        return false
+      end
+    end
+
+    def correct_user
+      puts params[:id].to_i == session[:user_id]
+      if (params[:id].to_i == session[:user_id])
+        return true
+      else
+        redirect_to "/main", notice: "No permission"
+        return false
+      end
     end
 end
