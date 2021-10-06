@@ -1,10 +1,11 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy]
   # before_action(:set_user, only: [:show,:edit,:update,:destroy])
-  # before_action :logged_in ,except: %i[main login]
+  before_action :logged_in ,except: %i[main login]
+  before_action :correct_user ,except: %i[main login index create new]
   # GET /users or /users.json
   def index
-    if (!logged_in)
+    if (!@isLogin)
       return
     end
     @users = User.all
@@ -12,7 +13,7 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
-    if (!logged_in || !correct_user)
+    if (!@isLogin || !@isValidUser)
       return
     end
     @posts = @user.posts
@@ -20,18 +21,24 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
+    if (!@isLogin)
+      return
+    end
     @user = User.new
   end
 
   # GET /users/1/edit
   def edit
-    if (!logged_in || !correct_user)
+    if (!@isLogin || !@isValidUser)
       return
     end
   end
 
   # POST /users or /users.json
   def create
+    if (!@isLogin)
+      return
+    end
     @user = User.new(user_params)
     respond_to do |format|
       if @user.save
@@ -47,7 +54,7 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
-    if (!logged_in || !correct_user)
+    if (!@isLogin || !@isValidUser)
       return
     end
     respond_to do |format|
@@ -63,7 +70,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/1 or /users/1.json
   def destroy
-    if (!logged_in || !correct_user)
+    if (!@isLogin || !@isValidUser)
       return
     end
     @user.destroy
@@ -118,8 +125,10 @@ class UsersController < ApplicationController
 
     def logged_in
       if (session[:user_id])
+          @isLogin = true
           return true
       else
+        @isLogin = false
         redirect_to "/main", notice: "Please login"
         return false
       end
@@ -128,10 +137,13 @@ class UsersController < ApplicationController
     def correct_user
       puts params[:id].to_i == session[:user_id]
       if (params[:id].to_i == session[:user_id])
+        @isValidUser = true
         return true
       else
+        @isValidUser = false
         redirect_to "/main", notice: "No permission"
         return false
       end
     end
+
 end

@@ -111,7 +111,7 @@ class PostsController < ApplicationController
 
     def logged_in
       if (session[:user_id])
-          return true
+        return true
       else
         redirect_to "/main", notice: "Please login"
         return false
